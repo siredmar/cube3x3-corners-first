@@ -1,0 +1,22 @@
+name: docs
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "^1.21.0" # The Go version to download (if necessary) and use.
+      - run: go version
+      - run: go install github.com/hattya/md2html@latest
+      - run: mkdir -p docs && md2html README.md docs/index.html
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
